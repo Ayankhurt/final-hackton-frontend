@@ -2,9 +2,10 @@
 // Centralized API calls with automatic JWT token handling
 
 import axios from 'axios';
+import { API_CONFIG } from '../config/api.js';
 
 // Base API configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://final-hackton-one.vercel.app';
+const API_BASE_URL = API_CONFIG.CURRENT;
 
 // Create axios instance with default config
 const api = axios.create({
@@ -39,11 +40,32 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    // Handle CORS errors
+    if (error.code === 'ERR_NETWORK' || error.message.includes('CORS')) {
+      console.error('CORS Error:', error.message);
+      console.error('This usually means the backend server is not configured to allow requests from this origin.');
+      console.error('Frontend origin:', window.location.origin);
+      console.error('Backend URL:', API_BASE_URL);
+      
+      // Show user-friendly error message
+      const corsError = new Error('Unable to connect to the server. Please check your internet connection or try again later.');
+      corsError.isCorsError = true;
+      return Promise.reject(corsError);
+    }
+    
     // Handle 401 Unauthorized - redirect to login
     if (error.response?.status === 401) {
       localStorage.removeItem('healthmate_token');
       localStorage.removeItem('healthmate_user');
       window.location.href = '/login';
+    }
+    
+    // Handle other network errors
+    if (!error.response) {
+      console.error('Network Error:', error.message);
+      const networkError = new Error('Network error. Please check your internet connection.');
+      networkError.isNetworkError = true;
+      return Promise.reject(networkError);
     }
     
     return Promise.reject(error);
