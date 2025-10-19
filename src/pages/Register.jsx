@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Mail, Lock, User, Heart, AlertCircle, CheckCircle } from 'lucide-react';
+import Button from '../components/Button';
 
 const Register = () => {
   const { register, isAuthenticated, loading, error, clearError } = useAuth();
@@ -333,20 +334,17 @@ const Register = () => {
 
             {/* Submit Button */}
             <div>
-              <button
+              <Button
                 type="submit"
+                variant="primary"
+                size="lg"
+                fullWidth
                 disabled={isSubmitting || loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                loading={isSubmitting || loading}
+                className="w-full"
               >
-                {isSubmitting || loading ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    <span>Creating account...</span>
-                  </div>
-                ) : (
-                  'Create account'
-                )}
-              </button>
+                {isSubmitting || loading ? 'Creating account...' : 'Create account'}
+              </Button>
             </div>
           </form>
 

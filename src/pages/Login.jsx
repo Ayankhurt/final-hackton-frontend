@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Mail, Lock, Heart, AlertCircle } from 'lucide-react';
+import Button from '../components/Button';
 
 const Login = () => {
   const { login, isAuthenticated, loading, error, clearError } = useAuth();
@@ -184,20 +185,17 @@ const Login = () => {
 
             {/* Submit Button */}
             <div>
-              <button
+              <Button
                 type="submit"
+                variant="primary"
+                size="lg"
+                fullWidth
                 disabled={isSubmitting || loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                loading={isSubmitting || loading}
+                className="w-full"
               >
-                {isSubmitting || loading ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    <span>Signing in...</span>
-                  </div>
-                ) : (
-                  'Sign in'
-                )}
-              </button>
+                {isSubmitting || loading ? 'Signing in...' : 'Sign in'}
+              </Button>
             </div>
           </form>
 
@@ -213,11 +211,15 @@ const Login = () => {
             </div>
 
             <div className="mt-6">
-              <Link
-                to="/register"
-                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-              >
-                Create your account
+              <Link to="/register" className="w-full">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  fullWidth
+                  className="w-full"
+                >
+                  Create your account
+                </Button>
               </Link>
             </div>
           </div>
