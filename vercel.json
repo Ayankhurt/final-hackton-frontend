@@ -11,7 +11,7 @@
         "headers": [
           {
             "key": "Access-Control-Allow-Origin",
-            "value": "https://final-hackton-frontend.vercel.app"
+            "value": "https://final-hackton.vercel.app"
           },
           {
             "key": "Access-Control-Allow-Methods",

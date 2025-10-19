@@ -9,10 +9,10 @@ import {
   tempTimelineAPI, 
   tempFamilyAPI, 
   tempHealthAPI 
-} from './tempApiProxy';
+} from './betterApiProxy';
 
-// Configuration flag - set to true to use CORS proxy
-const USE_CORS_PROXY = true; // Change this to false when backend CORS is fixed
+// Configuration flag - set to false to use backend directly
+const USE_CORS_PROXY = false; // Changed to false to use your backend directly
 
 // Export the appropriate API based on configuration
 export const authAPIProxy = USE_CORS_PROXY ? tempAuthAPI : authAPI;
@@ -28,7 +28,11 @@ export const isUsingCorsProxy = () => USE_CORS_PROXY;
 // Helper function to get current API base URL
 export const getCurrentApiUrl = () => {
   if (USE_CORS_PROXY) {
-    return 'https://cors-anywhere.herokuapp.com/https://final-hackton-one.vercel.app';
+    if (import.meta.env.DEV) {
+      return '/api'; // Vite proxy in development
+    } else {
+      return 'https://final-hackton-one.vercel.app'; // Direct backend URL
+    }
   }
   return 'https://final-hackton-one.vercel.app';
 };
@@ -36,6 +40,6 @@ export const getCurrentApiUrl = () => {
 // Console warning when using proxy
 if (USE_CORS_PROXY) {
   console.warn('🚨 USING CORS PROXY - This is temporary! Fix backend CORS configuration.');
-  console.warn('Backend URL:', 'https://final-hackton-one.vercel.app');
-  console.warn('Proxy URL:', 'https://cors-anywhere.herokuapp.com/');
+  console.warn('Environment:', import.meta.env.DEV ? 'Development' : 'Production');
+  console.warn('API URL:', getCurrentApiUrl());
 }

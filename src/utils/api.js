@@ -4,8 +4,8 @@
 import axios from 'axios';
 import { API_CONFIG } from '../config/api.js';
 
-// Base API configuration
-const API_BASE_URL = API_CONFIG.CURRENT;
+// Base API configuration - using your backend URL directly
+const API_BASE_URL = 'https://final-hackton-one.vercel.app';
 
 // Create axios instance with default config
 const api = axios.create({

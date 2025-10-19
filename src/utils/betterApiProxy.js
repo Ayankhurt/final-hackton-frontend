@@ -1,28 +1,42 @@
-// Temporary CORS Proxy Solution
-// This creates a proxy API route in your frontend to bypass CORS issues
+// Better CORS Proxy Solution
+// Uses development proxy for local development and direct backend for production
 
 import axios from 'axios';
 
-// Working CORS proxy alternatives
-const PROXY_OPTIONS = [
-  'https://api.allorigins.win/raw?url=',  // Option 1: AllOrigins
-  'https://corsproxy.io/?',               // Option 2: CORS Proxy
-  'https://thingproxy.freeboard.io/fetch/', // Option 3: ThingProxy
-];
+// Check if we're in development mode
+const isDevelopment = import.meta.env.DEV;
 
-// Use the first working proxy
-const CORS_PROXY_URL = PROXY_OPTIONS[0];
+// Backend URL - your actual backend
 const BACKEND_URL = 'https://final-hackton-one.vercel.app';
 
-// Create axios instance for proxy requests
-const proxyApi = axios.create({
-  baseURL: `${CORS_PROXY_URL}${BACKEND_URL}`,
-  timeout: 30000,
-  headers: {
-    'Content-Type': 'application/json',
-    'X-Requested-With': 'XMLHttpRequest', // Required for CORS proxy
-  },
-});
+// Configuration based on environment
+const getApiConfig = () => {
+  if (isDevelopment) {
+    // Use Vite proxy for development (already configured in vite.config.js)
+    return {
+      baseURL: '/api', // This will be proxied by Vite to your backend
+      timeout: 30000,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+  } else {
+    // Use direct backend URL for production
+    return {
+      baseURL: BACKEND_URL,
+      timeout: 30000,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'https://final-hackton-frontend.vercel.app',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+      },
+    };
+  }
+};
+
+// Create axios instance with appropriate configuration
+const proxyApi = axios.create(getApiConfig());
 
 // Request interceptor to add JWT token
 proxyApi.interceptors.request.use(
@@ -53,7 +67,7 @@ proxyApi.interceptors.response.use(
   }
 );
 
-// Temporary API functions using proxy
+// API functions using the proxy
 export const tempAuthAPI = {
   register: async (userData) => {
     const response = await proxyApi.post('/api/auth/register', userData);
