@@ -2,7 +2,7 @@
 // Global authentication state management with JWT token handling
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI } from '../utils/api';
+import { authAPIProxy, isUsingCorsProxy } from '../utils/apiProxy';
 
 // Create AuthContext
 const AuthContext = createContext();
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
           
           // Verify token is still valid by fetching user profile
           try {
-            const profileResponse = await authAPI.getProfile();
+            const profileResponse = await authAPIProxy.getProfile();
             if (profileResponse.success) {
               setUser(profileResponse.data.user);
             } else {
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      const response = await authAPI.login(credentials);
+      const response = await authAPIProxy.login(credentials);
       
       if (response.success) {
         const { token: newToken, user: userData } = response.data;
@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      const response = await authAPI.register(userData);
+      const response = await authAPIProxy.register(userData);
       
       if (response.success) {
         const { token: newToken, user: newUser } = response.data;
